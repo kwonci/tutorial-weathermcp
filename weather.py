@@ -2,6 +2,7 @@ from typing import Any
 
 import httpx
 from mcp.server.fastmcp import FastMCP
+from mcp.server.fastmcp.prompts import base
 
 # Initialize FastMCP server
 mcp = FastMCP("weather", log_level="ERROR")
@@ -96,6 +97,44 @@ Forecast: {period["detailedForecast"]}
 
     return "\n---\n".join(forecasts)
 
+@mcp.prompt()
+def review_code(code: str) -> str:
+    """
+    Generates a review prompt for the given code.
+
+    Args:
+        code (str): The code snippet to be reviewed.
+
+    Returns:
+        str: A formatted string prompting for a review of the provided code.
+    """
+    return "Please review the following code:\n" + code + "\n\n### Review:\n"
+
+
+# Q. User message와 Assistant message의 차이점은?
+# A. User message는 사용자가 입력하는 메시지이고, Assistant message는 AI가 응답하는 메시지입니다.
+# Ref: https://platform.openai.com/docs/guides/prompt-engineering
+# No DeveloperMessage(!)
+# Usage of assistant message: To generate a response from example, you can use the AssistantMessage class to create a message that represents the AI's response.
+# #x) (Tactic: Provide examples in ref)
+@mcp.prompt()
+def debug_error(error: str) -> list[base.Message]:
+    """
+    Generates a list of messages to assist in debugging an error.
+
+    Args:
+        error (str): The error message to be debugged.
+
+    Returns:
+        list[base.Message]: A list of messages including a prompt for debugging assistance.
+    """
+    return [
+        base.UserMessage("You are a helpful assistant that helps debug errors."),
+        base.UserMessage(f"Please help me debug the following error:\n{error}"),
+        base.AssistantMessage(
+            "Sure! Please provide the error message and any relevant code snippets."
+        ),
+    ]
 
 if __name__ == "__main__":
     mcp.run(transport="stdio")

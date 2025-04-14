@@ -59,3 +59,20 @@ Any kinds of data that an MCP server wants to make available to MCP clients.
     - 혹은 @mcp.resource(`uri_template`)을 통해서 정의
 
 정리하자면, mcpserver은 resource discovery가 가능하도록 리소스의 URI를 직접, 혹은 템플릿을 통해 노출한다. `mcpclients`는 available한 resource를 discover한 후 URI를 통해 해당 리소스를 요청할 수 있다.
+
+2. Prompts 정의
+
+목적에 맞는 prompts의 제공: 서버에게 재사용 가능한 prompts template을 제공하여 LLM interactions 간 표준화된 방법을 제공(user-controlled이고, user가 explicit하게 prmopts를 선택할 수 있는 것이 의도)
+
+구현해야하는 API
+
+- prompts discovery
+  - returns: (name, description, arguments)
+
+- prompts usage
+  - args: (name, arguments declared in prompts)
+  - returns: prompts(dynamic(resource 기반의 prmopts), multiple도 가능)
+
+3. Image 반환
+
+Image 반환 기능 존재
